@@ -1,0 +1,10 @@
+import { chromium } from 'playwright-core';
+const EXE = 'C:/Users/Administrator/AppData/Local/ms-playwright/chromium-1210/chrome-win64/chrome.exe';
+const browser = await chromium.launch({ executablePath: EXE, headless: true, args: ['--use-gl=angle', '--use-angle=swiftshader'] });
+const dev = await browser.newPage({ viewport: { width: 800, height: 480 } });
+await dev.goto('http://localhost:5173/#/device');
+await dev.waitForSelector('.voice-dock', { timeout: 20000 });
+await dev.waitForTimeout(3000);
+console.log('config keys:', await dev.evaluate(() => Object.keys(localStorage).filter((k) => k.startsWith('xiaoai'))));
+console.log('cfg snippet:', await dev.evaluate(() => (localStorage.getItem('xiaoai:blob:config') || '').slice(0, 200)));
+await browser.close();

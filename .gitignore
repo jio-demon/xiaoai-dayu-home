@@ -1,0 +1,38 @@
+node_modules/
+dist/
+build/
+.gradle/
+*.apk
+*.aab
+local.properties
+.vite/
+coverage/
+*.log
+tools/assets/out/
+apps/device-shell/app/build/
+
+# 本机工具链 / 大文件（按需重新下载，见 docs/dev-setup.md 与 device-shell README）
+tools/android/
+tools/dtb/
+tools/assets/hunyuan/*.npz
+tools/assets/hunyuan/*.glb
+tools/assets/hunyuan/tex*.png
+tools/assets/hunyuan/debug_archive/
+tools/*.wav
+tools/*.pcm
+tools/*.so
+tools/*.exe
+tools/*.txt
+tools/MiVpmService
+tools/tmp-debug-mic.mjs
+apps/device-shell/app/libs/*.aar
+apps/device-shell/app/src/main/assets/kws/*.onnx
+apps/device-shell/app/src/main/assets/web/
+
+# 发布产物走 GitHub Releases，不入库
+release/
+
+# 调试残留（正式截图在 docs/screenshots/，插图在 docs/images/）
+docs/*.png
+docs/sessions-dump*.json
+docs/*bytecode*.txt

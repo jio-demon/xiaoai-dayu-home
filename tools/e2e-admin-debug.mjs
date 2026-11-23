@@ -1,0 +1,14 @@
+import { chromium } from 'playwright-core';
+const EXE = 'C:/Users/Administrator/AppData/Local/ms-playwright/chromium-1210/chrome-win64/chrome.exe';
+const browser = await chromium.launch({ executablePath: EXE, headless: true, args: ['--use-gl=angle', '--use-angle=swiftshader'] });
+const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+page.on('console', (m) => console.log(`[${m.type()}]`, m.text().slice(0, 200)));
+page.on('response', async (r) => { if (r.url().includes('/api/')) console.log('RESP', r.status(), r.url(), (await r.text().catch(()=>'')).slice(0,150)); });
+await page.goto('http://192.168.31.149:8080/#/admin');
+await page.waitForSelector('.login-card', { timeout: 15000 });
+await page.fill('input[type=password]', 'test1234');
+await page.click('button.btn-primary');
+await page.waitForTimeout(4000);
+console.log('body:', await page.evaluate(() => document.body.innerText.slice(0, 400)));
+await page.screenshot({ path: 'F:/ai/xiaoai/docs/admin-login-debug.png' });
+await browser.close();

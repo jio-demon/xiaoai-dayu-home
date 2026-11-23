@@ -1,0 +1,22 @@
+{
+  "name": "xiaoai-dayu-home",
+  "private": true,
+  "version": "0.1.0",
+  "description": "LX04 改造：大肥鱼之家 AI 伴侣（Web 全栈 TS + Kotlin 薄壳）",
+  "workspaces": [
+    "packages/*",
+    "apps/web"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @xiaoai/web",
+    "build": "npm run build -w @xiaoai/protocol && npm run build -w @xiaoai/brain && npm run build -w @xiaoai/web",
+    "test": "npm run test -w @xiaoai/brain && npm run test -w @xiaoai/web",
+    "typecheck": "npm run typecheck -w @xiaoai/protocol && npm run typecheck -w @xiaoai/brain && npm run typecheck -w @xiaoai/web"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.65.1"
+  }
+}

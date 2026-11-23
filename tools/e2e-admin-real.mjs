@@ -1,0 +1,11 @@
+import { chromium } from 'playwright-core';
+const EXE = 'C:/Users/Administrator/AppData/Local/ms-playwright/chromium-1210/chrome-win64/chrome.exe';
+const browser = await chromium.launch({ executablePath: EXE, headless: true, args: ['--use-gl=angle', '--use-angle=swiftshader'] });
+const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+page.on('console', (m) => { if (m.type() === 'error') console.log('[console.error]', m.text().slice(0, 200)); });
+await page.goto('http://192.168.31.149:8080/#/admin');
+await page.waitForTimeout(5000);
+const text = await page.evaluate(() => document.body.innerText.slice(0, 600));
+console.log('--- page text ---\n' + text);
+await page.screenshot({ path: 'F:/ai/xiaoai/docs/admin-from-device.png' });
+await browser.close();
