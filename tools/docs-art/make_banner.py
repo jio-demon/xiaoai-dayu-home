@@ -29,7 +29,7 @@ def font(name, size): return ImageFont.truetype('C:/Windows/Fonts/' + name, size
 def rounded(im, rad):
     mask = Image.new('L', im.size, 0); ImageDraw.Draw(mask).rounded_rectangle((0, 0, im.size[0]-1, im.size[1]-1), rad, fill=255)
     out = Image.new('RGBA', im.size, (0, 0, 0, 0)); out.paste(im, (0, 0), mask); return out
-def place(path, box_w, x, y, angle, label):
+def place(path, box_w, x, y, angle, label, label_side='left'):
     im = Image.open(path).convert('RGB')
     ratio = box_w / im.width; im = im.resize((box_w, int(im.height * ratio)), Image.LANCZOS)
     im = rounded(im, 18)
@@ -43,11 +43,11 @@ def place(path, box_w, x, y, angle, label):
     img.paste(comp, (x, y), comp)
     # 标签（贴在卡片左上角外侧，避免被后一张卡遮住）
     f = font('msyh.ttc', 20); tw = d.textlength(label, font=f)
-    lx, ly = x + 50, y + 2
+    lx, ly = (x + 50 if label_side == 'left' else x + box_w - tw - 60), y + 2
     d.rounded_rectangle((lx, ly, lx + tw + 28, ly + 36), 18, fill=(20, 27, 51), outline=(64, 92, 170), width=1)
     d.text((lx + 14, ly + 6), label, font=f, fill=(210, 222, 255))
-place(os.path.join(SHOTS, 'device-idle-front.png'), 470, 1040, 70, -4, '深夜 · 星空 · 待机溜达')
-place(os.path.join(SHOTS, 'device-night-rain.png'), 470, 1090, 340, 3, '雨夜 · 窗外真实天气')
+place(os.path.join(SHOTS, 'device-idle-front.png'), 430, 980, 64, -4, '深夜 · 星空 · 待机溜达')
+place(os.path.join(SHOTS, 'device-night-rain.png'), 430, 1080, 316, 3, '雨夜 · 窗外真实天气', label_side='right')
 # 左侧文案
 d.text((80, 96), '🐋', font=font('seguiemj.ttf', 96), embedded_color=True)
 d.text((80, 215), '大肥鱼之家', font=font('msyhbd.ttc', 92), fill=(240, 244, 255))
