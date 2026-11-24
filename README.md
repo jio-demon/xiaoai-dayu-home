@@ -8,6 +8,8 @@
 
 她会自己在房间里溜达、看窗外的雨、听你说话、记得你说过的每一件事——也会像人一样慢慢淡忘。
 
+**简体中文** · [English](README.en.md)
+
 [![Release](https://img.shields.io/github/v/release/jio-demon/xiaoai-dayu-home?style=flat-square&color=5b8cff)](https://github.com/jio-demon/xiaoai-dayu-home/releases)
 [![License](https://img.shields.io/badge/license-MIT-5b8cff?style=flat-square)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%E2%89%A520-3c873a?style=flat-square)](https://nodejs.org)
@@ -258,6 +260,7 @@ node tools/docs-screenshots.mjs # 重新生成本 README 的全部截图
 | 文档 | 内容 |
 |---|---|
 | **[📖 图文使用教程](docs/tutorial.md)** | 从安装到实机，每一步配截图 |
+| **[📖 Illustrated Tutorial (EN)](docs/tutorial.en.md)** | English version of the tutorial |
 | [docs/user-manual.md](docs/user-manual.md) | 使用手册：首次开机、日常交互、天气、管理页、FAQ |
 | [docs/dev-setup.md](docs/dev-setup.md) | 开发环境、云端代理、网页语音唤醒、E2E |
 | [docs/architecture.md](docs/architecture.md) | 架构、数据流、降级与可靠性 |

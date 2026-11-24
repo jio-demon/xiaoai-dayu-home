@@ -4,6 +4,8 @@
 
 **从 `npm run dev` 到实机改造，每一步都配截图。**
 
+**简体中文** · [English](tutorial.en.md)
+
 [⬅ 返回 README](../README.md) · [使用手册（速查）](user-manual.md) · [开发环境](dev-setup.md) · [刷机指南](flashing.md)
 
 </div>
