@@ -308,6 +308,9 @@ adb shell am start -n com.xiaoai.shell/.MainActivity
 
 ### 11.3 装好之后
 
+<img src="images/real-device.jpg" width="72%" alt="真机实拍">
+
+上图就是装好后的实拍：左上角 `13:20 广州 ☁️ 20°` 是真实时间与天气，说「大肥鱼」即可离线唤醒。
 流程和 PC 完全一样：⚙ 设密码 → 手机扫码进管理页 → 填 key → 连通测试 → 开聊。
 区别只有三点：**唤醒是本地的**（sherpa-onnx KWS，安静环境 1 米内最佳）、**密钥加密落盘**（Keystore AES/GCM）、**卡了自动降级 2.5D**（实测 ~41fps）。
 

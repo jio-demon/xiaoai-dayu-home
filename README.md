@@ -23,6 +23,13 @@
 
 ## 📸 先看效果
 
+<div align="center">
+<img src="docs/images/real-device.jpg" width="72%" alt="真机实拍：小爱触屏音箱 LX04 上的大肥鱼之家">
+<br><sub>🐋 <b>真机实拍</b>：改造后的小爱触屏音箱 LX04 —— 广州 ☁️ 20°，午后晴天，大肥鱼在鲸鱼地毯上等你唤醒（本地 KWS 离线唤醒，1GB RAM 流畅运行）</sub>
+</div>
+
+<br>
+
 <table>
 <tr>
 <td width="50%"><img src="docs/screenshots/device-idle-front.png" alt="深夜待机"><br><sub>🌙 深夜：星空、月亮、城市灯火，她在鲸鱼地毯上发呆</sub></td>
@@ -42,7 +49,7 @@
 </tr>
 </table>
 
-> 所有截图来自 PC 模拟模式（`npm run dev`），与实机界面完全一致。生成脚本：[`tools/docs-screenshots.mjs`](tools/docs-screenshots.mjs)。
+> 除首张真机实拍外，其余截图来自 PC 模拟模式（`npm run dev`），与实机界面完全一致。生成脚本：[`tools/docs-screenshots.mjs`](tools/docs-screenshots.mjs)。
 
 ---
 
