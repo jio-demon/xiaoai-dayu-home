@@ -4,7 +4,7 @@
 
 # 🐋 大肥鱼之家 · Dayu Home
 
-**把小米小爱触屏音箱 LX04，改造成住在蓝色小房间里的 AI 鲸鱼娘「大肥鱼」。**
+**把小米小爱触屏音箱 LX04，改造成住在奶油海盐小屋里的 AI 鲸鱼娘「大肥鱼」。**
 
 她会自己在房间里溜达、看窗外的雨、听你说话、记得你说过的每一件事——也会像人一样慢慢淡忘。
 
@@ -14,7 +14,7 @@
 [![License](https://img.shields.io/badge/license-MIT-5b8cff?style=flat-square)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%E2%89%A520-3c873a?style=flat-square)](https://nodejs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178c6?style=flat-square)](https://www.typescriptlang.org/)
-[![Tests](https://img.shields.io/badge/tests-92%20passed-56c88c?style=flat-square)](#-开发与校验)
+[![Tests](https://img.shields.io/badge/tests-108%20passed-56c88c?style=flat-square)](#-开发与校验)
 [![Platform](https://img.shields.io/badge/device-LX04%20%C2%B7%20Android%208.1-ffc45c?style=flat-square)](#-实机改造lx04)
 
 [✨ 功能亮点](#-功能亮点) · [🚀 五分钟跑起来](#-五分钟跑起来pc-模拟无需实机) · [📖 图文使用教程](docs/tutorial.md) · [🏗️ 架构](#️-架构) · [🧠 记忆宫殿](#-记忆宫殿她怎样记住你) · [🔧 实机改造](#-实机改造lx04) · [❓ FAQ](#-常见问题)
@@ -51,7 +51,21 @@
 </tr>
 </table>
 
-> 除首张真机实拍外，其余截图来自 PC 模拟模式（`npm run dev`），与实机界面完全一致。生成脚本：[`tools/docs-screenshots.mjs`](tools/docs-screenshots.mjs)。
+> 除首张真机实拍外，其余截图来自 PC 模拟模式（`npm run dev`）。历史界面截图生成脚本：[`tools/docs-screenshots.mjs`](tools/docs-screenshots.mjs)。
+
+### 🏡 新房间：奶油海盐小屋
+
+| 日光 | 雨夜 |
+|---|---|
+| ![奶油海盐小屋日光](docs/screenshots/preview-cozy-day-800x480.png) | ![奶油海盐小屋雨夜](docs/screenshots/preview-cozy-rain-night-800x480.png) |
+
+上图为当前 Web 房间的 800×480 浏览器预览；可编辑 Blender 母版与重建说明见 [素材指南](docs/assets.md)。
+
+**v0.2.0 · LX04 实机载入完成截图**（Android 8.1 / WebView 61，非物理相机照片）：
+
+![LX04 上的奶油海盐小屋](docs/screenshots/device-room-v0.2.0-release.png)
+
+已在真机覆盖安装并确认原生桥、内置界面和 3D 房间正常载入。旧 WebView 会先尝试 modern 包，再自动使用 legacy 兼容包；首次启动请等待角色 GLB 载入，几何占位形象不是最终画面。本次未重新测试云端语音链路或进行持续帧率基准测试。上方历史功能截图保留 v0.1.0 房间，仅用于说明原有交互。
 
 ---
 
@@ -59,7 +73,7 @@
 
 | | 功能 | 说明 |
 |---|---|---|
-| 🏠 | **3D 生活场景** | three.js 程序化低模房间 + 腾讯混元生成的 Q 版鲸鱼娘 GLB（11MB，已减面优化）。待机随机溜达、避家具、发呆东张西望；唤醒后小跑到镜头前面向你。点她摸头会蹦一下，点窗户 / 床 / 玩偶 / 显示器 / 灯 / 地毯 / 收音机 / 绿植都有彩蛋台词。 |
+| 🏠 | **3D 生活场景** | 原创奶油海盐小屋（浅橡木、雾蓝织物、暖灯）+ 腾讯混元生成的 Q 版鲸鱼娘 GLB（11MB，已减面优化）。待机随机溜达、避家具、发呆东张西望；唤醒后小跑到镜头前面向你。点她摸头会蹦一下，点窗户 / 床 / 玩偶 / 显示器 / 灯 / 地毯 / 收音机 / 绿植都有彩蛋台词。 |
 | 🌦️ | **昼夜与真实天气** | 窗外天色跟随本机时间（日出日落渐变、太阳月亮轨迹、夜晚星空与城市灯火）；设置城市后窗外下真实的雨 / 雪 / 晴 / 雷（国内腾讯天气免 key，国际 Open-Meteo）。 |
 | 🎙️ | **语音唤醒对话** | 实机 sherpa-onnx 本地唤醒「大肥鱼」→ VAD 录音 → SenseVoice ASR → DeepSeek 流式 LLM → 逐句 TTS 播报，支持随时打断。PC 模拟有「模拟唤醒」按钮和实验性网页语音唤醒。 |
 | 🧠 | **记忆宫殿** | 六个房间分类存放记忆卡片；语义召回 topK≤6、≤800 token；常想起的越来越清晰，久不提的慢慢淡忘进阁楼；重要的事置顶永不遗忘；每天凌晨 4 点自动衰减 / 合并 / 归档。 |
@@ -124,7 +138,7 @@ flowchart LR
 |---|---|
 | [`packages/protocol`](packages/protocol) | 三方唯一类型契约：`BridgeApi` / REST / `WsMessage` / `AppConfig` / `MemoryCard`（改这里三端同步） |
 | [`packages/brain`](packages/brain) | 对话编排（召回 → 流式 LLM → 逐句 TTS → 会话整理 → 夜间巩固）+ 记忆宫殿 + 云服务商适配 · **52 单测** |
-| [`apps/web`](apps/web) | React 设备页 + 管理页 + three.js 场景 / 天气 /  locomotion / 降级 · **40 单测** |
+| [`apps/web`](apps/web) | React 设备页 + 管理页 + three.js 场景 / 天气 /  locomotion / 降级 · **56 单测** |
 | [`apps/device-shell`](apps/device-shell) | Kotlin 薄壳：Kiosk WebView、NanoHTTPD/NanoWSD :8080、SQLite kv（Keystore 加密）、AudioRecord/MediaPlayer、sherpa-onnx KWS、zip 热更新 |
 | [`tools/`](tools) | 刷机备份 / 模型下载 / Blender 素材脚本 / E2E 回归 / 文档截图与配图生成 |
 | [`docs/`](docs) | 架构、开发、刷机、素材、手册、Stage0 门槛、**图文教程** |
@@ -175,10 +189,10 @@ flowchart LR
 
 ### 路线 A：已能开 ADB → 直接装 APK（推荐先试）
 
-从 [Releases](https://github.com/jio-demon/xiaoai-dayu-home/releases) 下载 `dayu-home-v0.1.0.apk`（约 38MB，含本地唤醒模型）：
+从 [Releases](https://github.com/jio-demon/xiaoai-dayu-home/releases) 下载 `dayu-home-v0.2.0.apk`（约 40MB，含本地唤醒模型）：
 
 ```powershell
-adb install -r dayu-home-v0.1.0.apk
+adb install -r dayu-home-v0.2.0.apk
 adb shell am start -n com.xiaoai.shell/.MainActivity
 # 想开机直达大肥鱼桌面：
 adb shell cmd package set-home-activity com.xiaoai.shell/.MainActivity
@@ -201,10 +215,10 @@ adb uninstall com.xiaoai.shell
 powershell -File tools\stage0\fetch-models.ps1
 # 2. 放入 sherpa-onnx Android AAR 到 apps\device-shell\app\libs\（见 device-shell/README）
 # 3. 构建（需 JDK17 + Android SDK 34 + Gradle 8.7；脚本会自动 npm run build 并复制 dist）
-powershell -File apps\device-shell\build-apk.ps1
+pwsh -NoProfile -File apps\device-shell\build-apk.ps1
 ```
 
-产物：`release/dayu-home-v0.1.0.apk`。缺 AAR / 模型时 KWS 自动禁用，点麦克风说话仍可用。
+产物：`release/dayu-home-v0.2.0.apk`。缺 AAR / 模型时 KWS 自动禁用，点麦克风说话仍可用。
 
 ### 只改界面？热更新即可
 
@@ -235,13 +249,14 @@ powershell -File apps\device-shell\build-apk.ps1
 
 ```powershell
 npm run typecheck   # protocol + brain + web 三包
-npm run test        # brain 52 例 + web 40 例（vitest）
+npm run test        # brain 52 例 + web 56 例（vitest）
 npm run build       # vite 目标 chrome64 + @vitejs/plugin-legacy 双包，兼容旧 WebView
 ```
 
 可选 E2E 回归（先 `npm run dev`，依赖本机 Playwright Chromium）：
 
 ```powershell
+node tools/e2e-cozy-room.mjs    # 新房间：昼夜/雨雪/唤醒/摸头/2.5D/断图降级（自动 mock API）
 node tools/e2e-smoke.mjs        # 初始化 → 管理密码 → 四项连通测试 → 代理链路
 node tools/e2e-voice.mjs        # 唤醒 → 录音 → VAD → ASR 全链路
 node tools/e2e-wake-hit.mjs     # 同音「大飞鱼」命中唤醒

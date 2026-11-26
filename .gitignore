@@ -9,6 +9,8 @@ local.properties
 coverage/
 *.log
 tools/assets/out/
+# Blender rebuild intermediates; packed master and optimized runtime assets are tracked
+tools/assets/blender/source/
 apps/device-shell/app/build/
 
 # 本机工具链 / 大文件（按需重新下载，见 docs/dev-setup.md 与 device-shell README）

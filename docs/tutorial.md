@@ -285,7 +285,7 @@ npm run dev
 
 ```powershell
 # USB 插线，或网络连接：adb connect <设备IP>:5555
-adb install -r dayu-home-v0.1.0.apk          # 从 GitHub Releases 下载
+adb install -r dayu-home-v0.2.0.apk          # 从 GitHub Releases 下载
 adb shell am start -n com.xiaoai.shell/.MainActivity
 ```
 
@@ -338,7 +338,7 @@ Compress-Archive -Path apps\web\dist\* -DestinationPath web-bundle.zip
 2. **30 秒看门狗**：新包没上报心跳 hash → 自动回滚旧包，刷不坏；
 3. 保留最近 **3 个包**，可随时切回。
 
-> Releases 里的 `web-bundle-v0.1.0-native-fix-*.zip` 就是现成的热更新包，可直接上传体验。
+> Releases 里的 `web-bundle-v0.2.0-*.zip` 就是现成的热更新包，可直接上传体验。
 
 ---
 
@@ -349,8 +349,8 @@ Compress-Archive -Path apps\web\dist\* -DestinationPath web-bundle.zip
 powershell -File tools\stage0\fetch-models.ps1
 
 # 2) 一键构建（自动 npm run build → 复制 dist 到 assets/web → gradle assembleDebug）
-powershell -File apps\device-shell\build-apk.ps1
-# 产物：release\dayu-home-v0.1.0.apk（约 40MB，含本地唤醒）
+pwsh -NoProfile -File apps\device-shell\build-apk.ps1
+# 产物：release\dayu-home-v0.2.0.apk（约 40MB，含本地唤醒）
 ```
 
 工具链要求：JDK 17、Gradle 8.7+、Android SDK（platform 34 + build-tools）。换机器时的手动步骤、KWS 模型更换（唤醒词拼音单元写法）见 [device-shell README](../apps/device-shell/README.md)。
@@ -359,7 +359,7 @@ powershell -File apps\device-shell\build-apk.ps1
 
 ```powershell
 npm run typecheck   # protocol + brain + web 三包
-npm run test        # brain 52 例 + web 40 例
+npm run test        # brain 52 例 + web 56 例
 node tools/e2e-smoke.mjs   # 可选 E2E（先 npm run dev）
 ```
 

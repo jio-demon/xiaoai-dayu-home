@@ -36,6 +36,8 @@ export class MockBridge implements BridgeApi {
   private processor: ScriptProcessorNode | null = null;
   private source: MediaStreamAudioSourceNode | null = null;
   private micMode: 'kws' | 'record' | null = null;
+  private micStarting = false;
+  private micGeneration = 0;
   private pcmChunks: Int16Array[] = [];
   private recordedB64: string | null = null;
   private vadActive = false;
@@ -80,19 +82,44 @@ export class MockBridge implements BridgeApi {
   async stopAudio() { this.stopAudioSync(); }
 
   async startMic(mode: 'kws' | 'record') {
-    await this.stopMic();
+    // 与原生桥一致：切换采集模式不广播 off；off 只表示真正的启动失败。
+    // generation 同时隔离被 stop/新 start 淘汰的异步 getUserMedia，避免旧流复活。
+    this.releaseMic(false);
+    const generation = ++this.micGeneration;
+    this.micStarting = true;
     this.micMode = mode;
-    const gum = navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
-    const guard = new Promise<never>((_, rej) => setTimeout(() => rej(new Error('麦克风权限未授予或设备不可用')), 8000));
-    this.micStream = await Promise.race([gum, guard]).catch((e) => {
-      void gum.then((s) => { for (const t of s.getTracks()) t.stop(); }).catch(() => {});
+    let stream: MediaStream;
+    try {
+      const gum = navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+      let guard: ReturnType<typeof setTimeout> | undefined;
+      const timeout = new Promise<never>((_, reject) => {
+        guard = setTimeout(() => reject(new Error('麦克风权限未授予或设备不可用')), 8000);
+      });
+      try { stream = await Promise.race([gum, timeout]); }
+      finally { if (guard) clearTimeout(guard); }
+    } catch (e) {
+      if (generation === this.micGeneration) {
+        this.micStarting = false;
+        this.micMode = null;
+        this.dispatch({ type: 'mic', state: 'off' });
+      }
       throw e;
-    });
-    const Ctx: typeof AudioContext = window.AudioContext || (window as any).webkitAudioContext;
-    this.audioCtx = new Ctx();
-    if (this.audioCtx.state === 'suspended') void this.audioCtx.resume().catch(() => {});
-    this.source = this.audioCtx.createMediaStreamSource(this.micStream);
-    this.processor = this.audioCtx.createScriptProcessor(4096, 1, 1);
+    }
+    if (generation !== this.micGeneration) {
+      for (const track of stream.getTracks()) track.stop();
+      return;
+    }
+    try {
+      this.micStream = stream;
+      const Ctx: typeof AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+      this.audioCtx = new Ctx();
+      if (this.audioCtx.state === 'suspended') void this.audioCtx.resume().catch(() => {});
+      this.source = this.audioCtx.createMediaStreamSource(this.micStream);
+      this.processor = this.audioCtx.createScriptProcessor(4096, 1, 1);
+    } catch (e) {
+      this.releaseMic(true);
+      throw e;
+    }
     const rate = this.audioCtx.sampleRate;
     this.pcmChunks = [];
     this.recordedB64 = null;
@@ -122,6 +149,7 @@ export class MockBridge implements BridgeApi {
     };
     this.source.connect(this.processor);
     this.processor.connect(this.audioCtx.destination);
+    this.micStarting = false;
     this.dispatch({ type: 'mic', state: 'on' });
   }
 
@@ -141,22 +169,30 @@ export class MockBridge implements BridgeApi {
     if (hadVad || this.recordedB64) this.dispatch({ type: 'vad', state: 'end' });
   }
 
-  async stopMic() {
-    if (this.micMode === 'record' && this.pcmChunks.length && !this.recordedB64) {
-      this.recordedB64 = this.concatPcm();
-      this.dispatch({ type: 'vad', state: 'end' });
-    }
+  private releaseMic(notifyFailure: boolean) {
+    ++this.micGeneration;
+    const failed = notifyFailure && this.micStarting;
+    this.micStarting = false;
     if (this.capTimer) { clearTimeout(this.capTimer); this.capTimer = null; }
     this.micMode = null;
     if (this.processor) { try { this.processor.disconnect(); } catch { /* 忽略 */ } this.processor.onaudioprocess = null; this.processor = null; }
     if (this.source) { try { this.source.disconnect(); } catch { /* 忽略 */ } this.source = null; }
     if (this.micStream) { for (const t of this.micStream.getTracks()) t.stop(); this.micStream = null; }
     if (this.audioCtx) { void this.audioCtx.close().catch(() => {}); this.audioCtx = null; }
-    this.dispatch({ type: 'mic', state: 'off' });
+    if (failed) this.dispatch({ type: 'mic', state: 'off' });
+  }
+
+  async stopMic() {
+    if (this.micMode === 'record' && this.pcmChunks.length && !this.recordedB64) {
+      this.recordedB64 = this.concatPcm();
+      this.dispatch({ type: 'vad', state: 'end' });
+    }
+    // 正常收尾由 vad end 驱动状态机；不能把成功停止误报成“麦克风启动失败”。
+    this.releaseMic(false);
   }
 
   async readRecordedPcm() { return this.recordedB64; }
-  async getDeviceInfo() { return { ip: location.hostname || '127.0.0.1', version: 'web-sim-0.1.0' }; }
+  async getDeviceInfo() { return { ip: location.hostname || '127.0.0.1', version: 'web-sim-0.2.0' }; }
   onEvent(cb: Listener) { this.listeners.add(cb); return () => { this.listeners.delete(cb); }; }
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "@xiaoai/web",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -25,6 +25,7 @@
     "@types/three": "^0.160.0",
     "@vitejs/plugin-legacy": "^5.4.3",
     "@vitejs/plugin-react": "^4.3.4",
+    "jsdom": "^29.1.1",
     "terser": "^5.51.2",
     "typescript": "^5.6.3",
     "vite": "^5.4.11",

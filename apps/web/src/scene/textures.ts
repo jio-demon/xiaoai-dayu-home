@@ -8,21 +8,18 @@ function cv(w: number, h: number): [HTMLCanvasElement, CanvasRenderingContext2D]
 }
 
 export function woodFloor(): HTMLCanvasElement {
-  const [c, g] = cv(256, 256);
-  g.fillStyle = '#7a5c42'; g.fillRect(0, 0, 256, 256);
+  const [c, g] = cv(512, 512);
+  g.fillStyle = '#d4b98f'; g.fillRect(0, 0, 512, 512);
   for (let row = 0; row < 8; row++) {
-    const y = row * 32;
-    const off = (row % 2) * 64;
-    for (let x = -64; x < 256; x += 128) {
-      const hue = 0.9 + Math.random() * 0.2;
-      g.fillStyle = `rgb(${Math.round(122 * hue)},${Math.round(92 * hue)},${Math.round(66 * hue)})`;
-      g.fillRect(x + off + 1, y + 1, 126, 30);
-      g.strokeStyle = 'rgba(60,40,25,0.35)';
-      for (let i = 0; i < 3; i++) {
-        g.beginPath();
-        g.moveTo(x + off + 4, y + 6 + i * 9 + Math.random() * 3);
-        g.bezierCurveTo(x + off + 40, y + 4 + i * 9, x + off + 90, y + 9 + i * 9, x + off + 122, y + 6 + i * 9);
-        g.stroke();
+    const y = row * 64, off = (row % 2) * 128;
+    for (let x = -256; x < 512; x += 256) {
+      const tone = ((row * 17 + x + 256) % 13) - 6;
+      g.fillStyle = `rgb(${213 + tone},${188 + tone},${151 + tone})`;
+      g.fillRect(x + off + 1, y + 1, 254, 62);
+      g.strokeStyle = 'rgba(118,86,51,0.15)'; g.lineWidth = 1;
+      for (let i = 0; i < 5; i++) {
+        g.beginPath(); g.moveTo(x + off + 7, y + 9 + i * 10);
+        g.bezierCurveTo(x + off + 70, y + 4 + i * 10, x + off + 170, y + 15 + i * 10, x + off + 248, y + 8 + i * 10); g.stroke();
       }
     }
   }
@@ -30,14 +27,13 @@ export function woodFloor(): HTMLCanvasElement {
 }
 
 export function wall(): HTMLCanvasElement {
-  const [c, g] = cv(128, 128);
-  g.fillStyle = '#5d739e'; g.fillRect(0, 0, 128, 128);
-  for (let i = 0; i < 400; i++) {
-    g.fillStyle = `rgba(255,255,255,${Math.random() * 0.04})`;
-    g.fillRect(Math.random() * 128, Math.random() * 128, 2, 2);
+  const [c, g] = cv(512, 512);
+  g.fillStyle = '#eee5d4'; g.fillRect(0, 0, 512, 512);
+  for (let i = 0; i < 1800; i++) {
+    const x = (i * 73.37) % 512, y = (i * 41.73) % 512;
+    g.fillStyle = i % 2 ? 'rgba(255,255,255,0.12)' : 'rgba(151,128,95,0.035)';
+    g.fillRect(x, y, 2, 2);
   }
-  g.fillStyle = 'rgba(30,40,70,0.12)';
-  for (let y = 0; y < 128; y += 16) g.fillRect(0, y, 128, 1);
   return c;
 }
 
@@ -69,19 +65,21 @@ export function whaleWallpaper(): HTMLCanvasElement {
 }
 
 export function whaleRug(): HTMLCanvasElement {
-  const [c, g] = cv(256, 192);
-  g.fillStyle = '#2e4a7d'; g.fillRect(0, 0, 256, 192);
-  g.fillStyle = '#8fb8e8';
-  g.beginPath(); g.ellipse(120, 96, 88, 58, 0, 0, 7); g.fill();
-  g.beginPath(); g.moveTo(198, 88); g.quadraticCurveTo(232, 62, 246, 78); g.quadraticCurveTo(232, 96, 246, 116); g.quadraticCurveTo(228, 128, 198, 108); g.fill();
-  g.fillStyle = '#dcebf9';
-  g.beginPath(); g.ellipse(110, 116, 66, 30, 0, 0, 7); g.fill();
-  g.fillStyle = '#1d3355';
-  g.beginPath(); g.arc(70, 84, 6, 0, 7); g.fill();
-  g.strokeStyle = '#1d3355'; g.lineWidth = 3;
-  g.beginPath(); g.arc(60, 98, 8, 0.3, 2.7); g.stroke();
-  g.strokeStyle = 'rgba(255,255,255,0.25)'; g.lineWidth = 4;
-  g.beginPath(); g.ellipse(120, 96, 92, 62, 0, 0, 7); g.stroke();
+  const [c, g] = cv(512, 512);
+  g.fillStyle = '#e8ddc7'; g.fillRect(0, 0, 512, 512);
+  g.strokeStyle = '#c6b99e'; g.lineWidth = 5;
+  g.beginPath(); g.arc(256, 256, 242, 0, Math.PI * 2); g.stroke();
+  g.strokeStyle = '#f7f0df'; g.lineWidth = 9;
+  g.beginPath(); g.arc(256, 256, 228, 0, Math.PI * 2); g.stroke();
+  g.fillStyle = '#91afbf';
+  g.beginPath(); g.ellipse(230, 247, 143, 87, -0.08, 0, Math.PI * 2); g.fill();
+  g.beginPath(); g.moveTo(350, 230); g.quadraticCurveTo(411, 177, 443, 203);
+  g.quadraticCurveTo(417, 239, 447, 271); g.quadraticCurveTo(402, 290, 350, 260); g.fill();
+  g.fillStyle = '#dce8e8'; g.beginPath(); g.ellipse(211, 280, 106, 40, -0.08, 0, Math.PI * 2); g.fill();
+  g.fillStyle = '#405a69'; g.beginPath(); g.arc(145, 229, 7, 0, Math.PI * 2); g.fill();
+  g.strokeStyle = '#405a69'; g.lineWidth = 4; g.beginPath(); g.arc(132, 248, 12, 0.2, 2.6); g.stroke();
+  g.strokeStyle = 'rgba(255,255,255,0.35)'; g.lineWidth = 2;
+  for (let y = 20; y < 512; y += 8) { g.beginPath(); g.moveTo(15, y); g.lineTo(497, y); g.stroke(); }
   return c;
 }
 
@@ -222,11 +220,26 @@ export function poster(): HTMLCanvasElement {
 }
 
 export function blanket(): HTMLCanvasElement {
-  const [c, g] = cv(128, 128);
-  g.fillStyle = '#3f6fd8'; g.fillRect(0, 0, 128, 128);
-  g.strokeStyle = 'rgba(255,255,255,0.18)'; g.lineWidth = 2;
-  for (let i = 0; i < 128; i += 16) { g.beginPath(); g.moveTo(i, 0); g.lineTo(i, 128); g.stroke(); g.beginPath(); g.moveTo(0, i); g.lineTo(128, i); g.stroke(); }
-  g.fillStyle = 'rgba(255,255,255,0.35)';
-  for (let y = 8; y < 128; y += 32) for (let x = 8; x < 128; x += 32) { g.beginPath(); g.arc(x, y, 2, 0, 7); g.fill(); }
+  const [c, g] = cv(512, 512);
+  g.fillStyle = '#9bb8c7'; g.fillRect(0, 0, 512, 512);
+  for (let y = 0; y < 512; y += 64) for (let x = 0; x < 512; x += 64) {
+    g.fillStyle = ((x + y) / 64) % 2 ? '#a9c3cf' : '#9ebbc9';
+    g.fillRect(x, y, 64, 64);
+    g.strokeStyle = 'rgba(245,241,225,0.5)'; g.lineWidth = 2;
+    g.strokeRect(x + 4, y + 4, 56, 56);
+  }
+  g.strokeStyle = 'rgba(65,96,112,0.10)'; g.lineWidth = 1;
+  for (let i = 0; i < 512; i += 4) { g.beginPath(); g.moveTo(i, 0); g.lineTo(i, 512); g.stroke(); }
+  return c;
+}
+
+export function curtain(): HTMLCanvasElement {
+  const [c, g] = cv(512, 512);
+  for (let x = 0; x < 512; x++) {
+    const v = Math.round(151 + Math.sin(x / 19) * 17);
+    g.fillStyle = `rgb(${v - 13},${v + 12},${v + 24})`; g.fillRect(x, 0, 1, 512);
+  }
+  g.strokeStyle = 'rgba(239,244,239,0.14)';
+  for (let y = 0; y < 512; y += 5) { g.beginPath(); g.moveTo(0, y); g.lineTo(512, y); g.stroke(); }
   return c;
 }

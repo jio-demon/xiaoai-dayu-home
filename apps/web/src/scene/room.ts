@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { blanket, poster, windowSky, wall, whaleRug, whaleWallpaper, woodFloor } from './textures';
+import { poster, windowSky, wall, whaleWallpaper, woodFloor } from './textures';
+import { createRoomMaterials } from './roomMaterials';
 import { skyState, type SkyState, type WeatherCondition } from './sky';
 
 export interface RoomHandles {
@@ -8,6 +9,7 @@ export interface RoomHandles {
   update(t: number, dt: number, night: number): void;
   /** 城市天气联动：窗外雨雪/闪电随实况切换。 */
   setWeather(c: WeatherCondition): void;
+  dispose?(): void;
 }
 
 function tex(c: HTMLCanvasElement, rx = 1, ry = 1): THREE.CanvasTexture {
@@ -26,15 +28,16 @@ function box(w: number, h: number, d: number, mat: THREE.Material, x: number, y:
   return m;
 }
 
-/** 低模房间：参考图2的雨夜蓝色卧室（床+鲸鱼玩偶、书桌+鲸鱼壁纸显示器、雨窗、鲸鱼地毯、衣柜、书架、绿植）。 */
+/** 旧版房间：仅保留为奶油海盐小屋初始化失败时的内部紧急回退。 */
 export function buildRoom(): RoomHandles {
-  let weather: WeatherCondition = 'rain'; // 初始参考图2雨夜氛围；实况到达后切换
+  let weather: WeatherCondition = 'clear';
   const group = new THREE.Group();
   const interactives: { name: string; object: THREE.Object3D }[] = [];
-  const wood = lam(0xffffff, tex(woodFloor(), 3, 2));
-  const wallMat = lam(0xffffff, tex(wall(), 4, 2));
-  const darkWood = lam(0x6b4f3a);
-  const white = lam(0xe8ecf4);
+  const materials = createRoomMaterials();
+  const wood = materials.wood;
+  const wallMat = materials.wall;
+  const darkWood = lam(0xb9956c);
+  const white = lam(0xf4ecdc);
 
   // 地板与墙
   const floor = new THREE.Mesh(new THREE.PlaneGeometry(8, 6), wood);
@@ -42,8 +45,8 @@ export function buildRoom(): RoomHandles {
   group.add(floor);
   group.add(box(8, 3.2, 0.1, wallMat, 0, 1.6, -3.05));
   group.add(box(0.1, 3.2, 6, wallMat, -4.05, 1.6, 0));
-  group.add(box(8, 0.12, 0.12, lam(0x3a4560), 0, 0.06, -2.99));
-  group.add(box(0.12, 0.12, 6, lam(0x3a4560), -3.99, 0.06, 0));
+  group.add(box(8, 0.12, 0.12, lam(0xc8b99f), 0, 0.06, -2.99));
+  group.add(box(0.12, 0.12, 6, lam(0xc8b99f), -3.99, 0.06, 0));
 
   // 雨窗
   const win = new THREE.Group();
@@ -54,7 +57,7 @@ export function buildRoom(): RoomHandles {
   const glass = new THREE.Mesh(new THREE.PlaneGeometry(2.2, 1.5), glassMat);
   glass.position.z = 0.01;
   win.add(glass);
-  const frameMat = lam(0x3a4a6a);
+  const frameMat = lam(0xe7dcc8);
   win.add(box(2.4, 0.1, 0.1, frameMat, 0, 0.8, 0.03));
   win.add(box(2.4, 0.1, 0.1, frameMat, 0, -0.8, 0.03));
   win.add(box(0.1, 1.7, 0.1, frameMat, -1.15, 0, 0.03));
@@ -102,7 +105,7 @@ export function buildRoom(): RoomHandles {
   bed.position.set(-2.75, 0, -0.5);
   bed.add(box(1.7, 0.35, 2.7, darkWood, 0, 0.18, 0));
   bed.add(box(1.6, 0.22, 2.6, white, 0, 0.46, 0));
-  bed.add(box(1.62, 0.12, 1.75, lam(0xffffff, tex(blanket(), 2, 2)), 0, 0.58, 0.4));
+  bed.add(box(1.62, 0.12, 1.75, materials.bedding, 0, 0.58, 0.4));
   bed.add(box(0.95, 0.16, 0.5, lam(0xf4f6fb), 0, 0.62, -0.95));
   bed.add(box(1.7, 0.9, 0.12, darkWood, 0, 0.6, -1.35));
   const plush = new THREE.Group();
@@ -176,7 +179,7 @@ export function buildRoom(): RoomHandles {
   group.add(chair);
 
   // 鲸鱼地毯
-  const rug = new THREE.Mesh(new THREE.CircleGeometry(1.25, 24), lam(0xffffff, tex(whaleRug())));
+  const rug = new THREE.Mesh(new THREE.CircleGeometry(1.25, 24), materials.rug);
   rug.rotation.x = -Math.PI / 2;
   rug.scale.set(1, 0.78, 1);
   rug.position.set(0, 0.015, 0.7);
@@ -334,6 +337,6 @@ export function buildRoom(): RoomHandles {
     }
   }
 
-  return { group, interactives, update, setWeather };
+  return { group, interactives, update, setWeather, dispose: () => materials.dispose() };
 }
 

@@ -8,3 +8,4 @@
 *.onnx binary
 *.wav binary
 *.ps1 text eol=crlf
+*.blend binary

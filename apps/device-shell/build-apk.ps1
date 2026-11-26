@@ -1,5 +1,5 @@
 # 构建大肥鱼之家薄壳 APK（本机工具链已就位版）
-# 用法：powershell -File build-apk.ps1 [-SkipWeb]
+# 用法：pwsh -NoProfile -File build-apk.ps1 [-SkipWeb]
 # 工具链：tools\android\jdk（JDK17）、tools\android\gradle（8.7）、C:\Android（SDK 34）
 param([switch]$SkipWeb)
 $ErrorActionPreference = 'Stop'
@@ -41,6 +41,6 @@ $apk = Join-Path $shell 'app\build\outputs\apk\debug\app-debug.apk'
 if (Test-Path $apk) {
     $release = Join-Path $repo 'release'
     New-Item -ItemType Directory -Force -Path $release | Out-Null
-    Copy-Item $apk (Join-Path $release 'dayu-home-v0.1.0.apk') -Force
-    Write-Host "APK 就绪：$release\dayu-home-v0.1.0.apk" -ForegroundColor Green
+    Copy-Item $apk (Join-Path $release 'dayu-home-v0.2.0.apk') -Force
+    Write-Host "APK 就绪：$release\dayu-home-v0.2.0.apk" -ForegroundColor Green
 }

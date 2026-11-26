@@ -11,8 +11,8 @@ android {
         applicationId = "com.xiaoai.shell"
         minSdk = 27          // Android 8.1（LX04 原厂版本）
         targetSdk = 28       // 保持旧行为：前台服务/存储/WebView 均按 8.1 语义
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "0.2.0"
         // LX04 = MT8167 (armeabi-v7a)；只保留 arm 两架构，去掉 x86 减 60MB
         ndk { abiFilters += listOf("armeabi-v7a") } // MT8167 是 32 位 ARM；如换 64 位盒子再加 arm64-v8a
     }

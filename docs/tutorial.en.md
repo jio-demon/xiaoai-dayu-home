@@ -286,7 +286,7 @@ Works if the device already exposes ADB (community ROM / developer options / net
 
 ```powershell
 # USB cable, or network: adb connect <device-ip>:5555
-adb install -r dayu-home-v0.1.0.apk          # download from GitHub Releases
+adb install -r dayu-home-v0.2.0.apk          # download from GitHub Releases
 adb shell am start -n com.xiaoai.shell/.MainActivity
 ```
 
@@ -339,7 +339,7 @@ Safety mechanisms:
 2. **30-second watchdog**: if the new bundle doesn't heartbeat its hash → automatic rollback. Unbrickable by design;
 3. Keeps the last **3 bundles** — switch back anytime.
 
-> The `web-bundle-v0.1.0-native-fix-*.zip` in Releases is a ready-made hot-update package — upload it to try the flow.
+> The `web-bundle-v0.2.0-*.zip` in Releases is a ready-made hot-update package — upload it to try the flow.
 
 ---
 
@@ -350,8 +350,8 @@ Safety mechanisms:
 powershell -File tools\stage0\fetch-models.ps1
 
 # 2) One-shot build (npm run build → copy dist into assets/web → gradle assembleDebug)
-powershell -File apps\device-shell\build-apk.ps1
-# Output: release\dayu-home-v0.1.0.apk (~40MB, local wake included)
+pwsh -NoProfile -File apps\device-shell\build-apk.ps1
+# Output: release\dayu-home-v0.2.0.apk (~40MB, local wake included)
 ```
 
 Toolchain: JDK 17, Gradle 8.7+, Android SDK (platform 34 + build-tools). Manual steps for a fresh machine and KWS model swaps (wake-word phoneme spelling): [device-shell README](../apps/device-shell/README.md) (Chinese).
@@ -360,7 +360,7 @@ Daily validation:
 
 ```powershell
 npm run typecheck   # protocol + brain + web
-npm run test        # brain 52 + web 40 cases
+npm run test        # brain 52 + web 56 cases
 node tools/e2e-smoke.mjs   # optional E2E (run npm run dev first)
 ```
 

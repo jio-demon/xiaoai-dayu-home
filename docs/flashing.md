@@ -30,7 +30,7 @@ powershell -File tools\stage0\backup.ps1
 ```powershell
 # USB：插线后 adb devices 出现设备即可
 # 或网络：adb connect <设备IP>:5555
-adb install -r F:\ai\xiaoai\release\dayu-home-v0.1.0.apk
+adb install -r F:\ai\xiaoai\release\dayu-home-v0.2.0.apk
 adb shell am start -n com.xiaoai.shell/.MainActivity
 ```
 - 首次启动会请求麦克风权限，允许即可。
@@ -43,10 +43,10 @@ adb shell am start -n com.xiaoai.shell/.MainActivity
 
 ## 重新打包 APK（改了代码之后）
 ```powershell
-powershell -File apps\device-shell\build-apk.ps1
+pwsh -NoProfile -File apps\device-shell\build-apk.ps1
 ```
 本机工具链已就位：`tools\android\jdk`（JDK17）+ `tools\android\gradle`（8.7）+ `C:\Android`（SDK34），
-产物自动复制到 `release\dayu-home-v0.1.0.apk`。只改 Web 界面时也可以不打 APK——
+产物自动复制到 `release\dayu-home-v0.2.0.apk`。只改 Web 界面时也可以不打 APK——
 管理页「固件更新」上传 zip 热更新即可（zip 内容 = apps\web\dist 目录打包）。
 
 ## 真机踩坑记录（LX04 / Android 8.1 / WebView 61，2026-11 实测）

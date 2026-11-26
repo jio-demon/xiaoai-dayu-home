@@ -16,7 +16,7 @@ import { pickFlavor } from './flavor';
 import { watchWeather } from '../net/weather';
 import { CONDITION_ICON, CONDITION_LABEL, type WeatherNow } from '../scene/sky';
 
-const VERSION = '0.1.0';
+const VERSION = '0.2.0';
 const IDLE_END_MS = 90 * 1000;
 
 /** 未初始化时只订阅事件，不访问存储/麦克风；设备页不会提前创建模拟桥。 */

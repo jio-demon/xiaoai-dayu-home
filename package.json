@@ -1,7 +1,7 @@
 {
   "name": "xiaoai-dayu-home",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "LX04 改造：大肥鱼之家 AI 伴侣（Web 全栈 TS + Kotlin 薄壳）",
   "workspaces": [
     "packages/*",

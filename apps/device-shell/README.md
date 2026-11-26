@@ -4,7 +4,7 @@ Kotlin 薄壳 = Kiosk WebView + 本地 Web 服务（NanoHTTPD/NanoWSD :8080）+ 
 + 音频（AudioRecord 16k / MediaPlayer）+ 可选 sherpa-onnx 本地唤醒 + zip 热更新。
 
 ## 构建（本机工具链已就位：tools\android\jdk + tools\android\gradle + C:\Android SDK34）
-直接 `powershell -File build-apk.ps1`，产物在 `release\dayu-home-v0.1.0.apk`（约 37MB，含本地唤醒）。
+直接 `pwsh -NoProfile -File build-apk.ps1`，产物在 `release\dayu-home-v0.2.0.apk`（约 40MB，含本地唤醒）。
 以下手动步骤仅在换机器时需要：
 1. 安装 JDK 17、Android SDK（platform 34 + build-tools）、Gradle 8.7+。
 2. 「大肥鱼」语音唤醒已内置（sherpa-onnx 2.0.2 AAR + wenetspeech KWS int8 模型 + silero VAD，
@@ -16,7 +16,7 @@ Kotlin 薄壳 = Kiosk WebView + 本地 Web 服务（NanoHTTPD/NanoWSD :8080）+ 
      silero_vad.onnx 同目录。用官方 `text2token.py` 把「大肥鱼」转成建模单元写入
      `assets/kws/keywords.txt`（脚本见 tools/stage0/fetch-models.ps1 的说明）。
    - AAR 或模型缺失时自动禁用 KWS，点麦克风说话仍可用。
-3. `powershell -File build-apk.ps1`（自动 npm run build 并复制 dist 到 assets/web）。
+3. `pwsh -NoProfile -File build-apk.ps1`（自动 npm run build 并复制 dist 到 assets/web）。
 4. `adb install app/build/outputs/apk/debug/app-debug.apk`。
 
 ## 运行时结构

@@ -1,19 +1,24 @@
 import * as THREE from 'three';
 import type { VoiceState } from '@xiaoai/protocol';
 import { buildRoom, type RoomHandles } from './room';
+import { buildCozyRoom } from './cozyRoom';
+import { ROOM_LAYOUT } from './roomLayout';
 import { PlaceholderCharacter, tryLoadVrm } from './character';
 import { GlbCharacter, tryLoadGlb } from './glbCharacter';
 import { Fallback25D } from './fallback25d';
 import { Locomotion, type RoamCharacter } from './locomotion';
 import { skyState, roomLighting, rgbHex, type WeatherCondition } from './sky';
 
-/** 闲逛范围：避开床(x<-1.9)、书桌(z<-1.7且x>1.2)、衣柜(x>3.2)、书架/绿植(x<-3.2) */
 const LOCO_OPTS = {
-  bounds: { minX: -1.55, maxX: 2.6, minZ: -1.35, maxZ: 1.9 },
-  engageSpot: { x: -1.05, z: 1.35 }, // 唤醒后走到镜头前左侧（地毯左缘）
-  home: { x: 0.1, z: 0.75 },
-  faceYaw: 0.12, // 面向镜头略偏，正对 camera(0.2, 2.9, 6.1)
+  bounds: ROOM_LAYOUT.bounds, engageSpot: ROOM_LAYOUT.engageSpot,
+  home: ROOM_LAYOUT.home, faceYaw: ROOM_LAYOUT.faceYaw,
 };
+
+/** 新房间默认启用；旧实现只在构建异常时内部接管，不暴露房间选择器。 */
+export function createDefaultRoom(): { room: RoomHandles; fallbackUsed: boolean } {
+  try { return { room: buildCozyRoom(), fallbackUsed: false }; }
+  catch { return { room: buildRoom(), fallbackUsed: true }; }
+}
 
 export interface SceneOpts {
   mode: '3d' | '2.5d';
@@ -49,7 +54,9 @@ export class SceneManager {
   private fpsReport = 0;
   private resizeObs: ResizeObserver | null = null;
   private voiceState: VoiceState = 'idle';
-  private weather: WeatherCondition = 'rain';
+  private weather: WeatherCondition = 'clear';
+  private roomFallbackUsed = false;
+  private presentationUntil = performance.now() / 1000 + 2.5;
   private lightTimer = 1; // 立即采样一次
 
   constructor(private canvas: HTMLCanvasElement, private opts: SceneOpts) {
@@ -57,10 +64,10 @@ export class SceneManager {
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'low-power' });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
-    this.scene3.background = new THREE.Color(0x0b1020);
+    this.scene3.background = new THREE.Color(0xe8dfd0);
     this.camera3 = new THREE.PerspectiveCamera(46, 800 / 480, 0.1, 40);
-    this.camera3.position.set(0.2, 2.9, 6.1);
-    this.camera3.lookAt(0, 1.05, -0.3);
+    this.camera3.position.set(...ROOM_LAYOUT.camera.position);
+    this.camera3.lookAt(...ROOM_LAYOUT.camera.target);
 
     this.ambient = new THREE.AmbientLight(0x9fb4d8, 0.75);
     this.dir = new THREE.DirectionalLight(0xbfd4ff, 0.5);
@@ -68,10 +75,11 @@ export class SceneManager {
     this.lights.add(this.ambient, this.dir);
     this.scene3.add(this.lights);
 
-    this.room = buildRoom();
+    const created = createDefaultRoom();
+    this.room = created.room; this.roomFallbackUsed = created.fallbackUsed;
     this.scene3.add(this.room.group);
     this.applyEnvironment(0);
-    this.character.group.position.set(0.1, 0, 0.75);
+    this.character.group.position.set(ROOM_LAYOUT.home.x, 0, ROOM_LAYOUT.home.z);
     this.scene3.add(this.character.group);
     this.loco = new Locomotion(this.character, LOCO_OPTS);
 
@@ -224,10 +232,14 @@ export class SceneManager {
     }
   };
 
-  private lastNight = 1;
+  private lastNight = 0;
   /** 现实时间 + 天气 → 房间光照（每秒采样，颜色平滑过渡由 minute 级纹理承担）。 */
   private applyEnvironment(_dt: number) {
-    const s = skyState(new Date(), this.weather);
+    const preview = (window as any).__roomPreview;
+    const now = preview && Number.isFinite(preview.hour)
+      ? new Date(2026, 0, 1, Math.floor(preview.hour), Math.round((preview.hour % 1) * 60))
+      : performance.now() / 1000 < this.presentationUntil ? new Date(2026, 0, 1, 12) : new Date();
+    const s = skyState(now, this.weather);
     this.lastNight = s.night;
     const l = roomLighting(s);
     this.ambient.color.setHex(rgbHex(l.ambientColor));
@@ -239,11 +251,23 @@ export class SceneManager {
 
   /** 城市天气联动入口：DeviceApp 拉到实况后调用。 */
   setWeather(c: WeatherCondition) {
+    this.presentationUntil = 0;
     if (c === this.weather) return;
     this.weather = c;
     this.room.setWeather(c);
     this.lightTimer = 1;
     this.fallback?.setEnvironment(this.lastNight, c);
+  }
+
+  get roomStats() {
+    let triangles = 0, drawCalls = 0;
+    this.room.group.traverse((o) => {
+      const mesh = o as THREE.Mesh;
+      if (!mesh.isMesh && !(o as THREE.Points).isPoints) return;
+      drawCalls += Array.isArray(mesh.material) ? mesh.material.length : 1;
+      if (mesh.isMesh) triangles += (mesh.geometry.index?.count ?? mesh.geometry.attributes.position?.count ?? 0) / 3;
+    });
+    return { triangles: Math.round(triangles), drawCalls, fallbackUsed: this.roomFallbackUsed };
   }
 
   get currentWeather() { return this.weather; }
@@ -264,6 +288,7 @@ export class SceneManager {
       if (Array.isArray(mat)) mat.forEach((x) => x.dispose());
       else mat?.dispose();
     });
+    this.room.dispose?.();
     this.renderer.dispose();
   }
 }

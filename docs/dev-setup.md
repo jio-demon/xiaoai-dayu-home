@@ -47,7 +47,7 @@ localhost/127.* 与相对地址不代理。实机由原生壳请求云端，不�
 ## 校验
 ```powershell
 npm run typecheck   # protocol + brain + web 三包
-npm run test        # brain 52 例 + web 40 例
+npm run test        # brain 52 例 + web 56 例
 npm run build       # vite 目标 chrome64（兼容旧 WebView）
 ```
 
